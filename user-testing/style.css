@@ -88,3 +88,13 @@ p {
   line-height: 1.5;
   color: #008437;
 }
+
+body {
+  max-width: 50%;
+  margin-left: 90px;
+}
+ul{
+    /* list-style-type: none;
+     */
+    font-size: 21px;
+}
