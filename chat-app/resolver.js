@@ -1,45 +1,60 @@
 export default class UsernameResolver {
-
-  constructor(graffiti, context=['designftw.mit.edu']) {
-    this.gf = graffiti
-    this.context = context
+  constructor(graffiti, context = ["designftw.mit.edu"]) {
+    this.gf = graffiti;
+    this.context = context;
   }
 
-  async usernameToActor(username, signal=AbortSignal.timeout(500)) {
-    const offer = await this.#resolveOffer(object=> 
-      object.object.preferredUsername == username, signal)
-    return offer? offer.actor : null
+  async usernameToActor(username, signal = AbortSignal.timeout(500)) {
+    const offer = await this.#resolveOffer(
+      (object) => object.object.preferredUsername == username,
+      signal
+    );
+    return offer ? offer.actor : null;
   }
 
-  async actorToUsername(actor, signal=AbortSignal.timeout(500)) {
-    const offer = await this.#resolveOffer(object=> 
-      object.actor == actor &&
-      object.object.actor == actor, signal)
-    return offer? offer.object.preferredUsername : null
+  async actorToUsername(actor, signal = AbortSignal.timeout(500)) {
+    const offer = await this.#resolveOffer(
+      (object) => object.actor == actor && object.object.actor == actor,
+      signal
+    );
+    return offer ? offer.object.preferredUsername : null;
+  }
+  async sendMessage() {
+    const content = this.messageText.trim();
+    if (!content) return;
+
+    const bto = this.recipient
+      ? [await resolver.resolveActor(this.recipient)]
+      : [];
+    const message = await $gf.create({ "@type": "Note", content, bto });
+
+    this.messageText = "";
+    this.recipient = "";
   }
 
-  async requestUsername(preferredUsername, signal=AbortSignal.timeout(500)) {
+  async requestUsername(preferredUsername, signal = AbortSignal.timeout(500)) {
     // Check if we have already have made an offer
-    let offer = null
+    let offer = null;
     for await (const object of this.gf.objects(this.context, signal)) {
       if (this.#offerFilter(object)) {
-
         // Someone else already has the name!
-        if (object.actor != this.gf.me &&
-            object.object.preferredUsername == preferredUsername) {
-          throw "Username already claimed!"
+        if (
+          object.actor != this.gf.me &&
+          object.object.preferredUsername == preferredUsername
+        ) {
+          throw "ERROR! Username's already taken. ";
         }
 
         // An offer already exists!
         if (object.actor == this.gf.me) {
           if (!offer) {
-            offer = object
+            offer = object;
           } else if (object.updated < offer.updated) {
             // Remove hanging offers if they exist
-            this.gf.remove(offer)
-            offer = object
+            this.gf.remove(offer);
+            offer = object;
           } else {
-            this.gf.remove(object)
+            this.gf.remove(object);
           }
         }
       }
@@ -47,42 +62,53 @@ export default class UsernameResolver {
 
     // If an offer already exists, just change it
     if (offer) {
-      offer.object.preferredUsername = preferredUsername
-      return "success"
+      offer.object.preferredUsername = preferredUsername;
+      // return "Success! Your new username is set." ;
+      // alert ("SUCCESS! Username Changed.");
+      // return `Your new username: ${preferredUsername}`;
+      var result = `Your new username is: ${preferredUsername}`;
+      // return "Success! Your new username is set.";
+      alert("SUCCESS! Username Changed. "+result);
+      // alert("Hello, world!");
+      return result;
     }
 
     // Otherwise make a new one
     this.gf.post({
-      type: 'Offer',
+      type: "Offer",
       object: {
-        type: 'Profile',
+        type: "Profile",
         preferredUsername,
-        actor: this.gf.me
+        actor: this.gf.me,
       },
       target: {
-        type: 'NameSystem',
-        namespace: this.context
+        type: "NameSystem",
+        namespace: this.context,
       },
-      context: this.context
-    })
-    return "success"
+      context: this.context,
+    });
+
+    var result = `Your new username is: ${preferredUsername}`;
+    // return "Success! Your new username is set.";
+    alert("SUCCESS! Username Changed. "+result);
+    return result;
   }
 
   async #resolveOffer(condition, signal) {
-    let offer = null
+    let offer = null;
     for await (const object of this.gf.objects(this.context, signal)) {
       if (this.#offerFilter(object) && condition(object)) {
         if (!offer) {
-          offer = object
+          offer = object;
         } else if (object.updated < offer.updated) {
-          offer = object
+          offer = object;
         }
       }
     }
 
     // If there is nothing accepted
     // just return an arbitrary offer if one exists
-    return offer
+    return offer;
   }
 
   // The target of offers and requests
@@ -91,11 +117,13 @@ export default class UsernameResolver {
   //    namespace: ['mycontext', ...]
   // }
   #targetFilter(t) {
-    return t.type &&
-           t.type == 'NameSystem' &&
-           t.namespace &&
-           Array.isArray(t.namespace) &&
-           t.namespace.includes(this.context[0])
+    return (
+      t.type &&
+      t.type == "NameSystem" &&
+      t.namespace &&
+      Array.isArray(t.namespace) &&
+      t.namespace.includes(this.context[0])
+    );
   }
 
   // The object of offers and requests
@@ -105,14 +133,17 @@ export default class UsernameResolver {
   //    actor: 'graffitiactor://xyz'
   // }
   #objectFilter(o) {
-    return o.actor &&
-           typeof o.actor == 'string' &&
-           o.type &&
-           o.type == 'Profile' &&
-           o.preferredUsername &&
-           typeof o.preferredUsername == 'string'
+    return (
+      o.actor &&
+      typeof o.actor == "string" &&
+      o.type &&
+      o.type == "Profile" &&
+      o.preferredUsername &&
+      typeof o.preferredUsername == "string"
+    );
   }
 
+  //
   // {
   //    type: 'Offer'
   //    target: {
@@ -125,11 +156,13 @@ export default class UsernameResolver {
   //    }
   // }
   #offerFilter(o) {
-    return o.type &&
-           o.type == 'Offer' &&
-           o.target &&
-           this.#targetFilter(o.target) &&
-           o.object &&
-           this.#objectFilter(o.object)
+    return (
+      o.type &&
+      o.type == "Offer" &&
+      o.target &&
+      this.#targetFilter(o.target) &&
+      o.object &&
+      this.#objectFilter(o.object)
+    );
   }
 }

@@ -1,1 +1,99 @@
-/* some css */
+body {
+  background: linear-gradient(to right, #ff00408a, #8000808b);
+  animation: background-animation 6s ease-in-out infinite alternate;
+}
+
+@keyframes background-animation {
+  0% {
+    background: linear-gradient(to left, #ff00ff7e, #4c008275);
+  }
+  50% {
+    background: linear-gradient(to right, #4c008279, #ff00ff80);
+  }
+  100% {
+    background: linear-gradient(to left, #ff00ff75, #8000807f);
+  }
+}
+p {
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  color: #333;
+  line-height: 1.5;
+}
+/* H1 styles */
+h1 {
+  font-size: 48px;
+  padding-top: 30px;
+  /* font-weight: bold; */
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+  color: #510684d8;
+  text-shadow: 1px 1px #fff;
+}
+
+/* H2 styles */
+h2 {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 30px 0 20px;
+  color: #666;
+  text-transform: uppercase;
+  text-decoration: underline;
+  letter-spacing: 1px;
+}
+
+/* H3 styles */
+h3 {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 20px 0;
+  color: #484848;
+  text-transform: capitalize;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+}
+
+/* H4 styles */
+h4 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 15px 0;
+  color: #333;
+}
+
+/* H5 styles */
+h5 {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #666;
+}
+
+/* H6 styles */
+h6 {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #999;
+  text-transform: uppercase;
+}
+header {
+  font-family: "Montserrat", sans-serif;
+  font-size: 48px;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(to right, #5a1b9a8a, #9300f53d);
+  padding: 5px;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+body {
+  /* margin-top: 10px; */
+  padding-left: 15.6%;
+  padding-right: 19.5%;
+}

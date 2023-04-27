@@ -1,22 +1,69 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <script type="module" src="./chat.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div id="app">
+  <header>
     <h1>
-      My Cool Chat App
+      Chatzy
+
     </h1>
+  </header>
+
+  <div id="app">
+
+    <!-- <li>
+      {{lookupUsername(message.actorId)}}
+    <li> -->
+    <!-- <li>
+        {{lookupUsername(message.actor)}}
+      </li> -->
 
     <p>
-      <button @click="$gf.toggleLogIn">
-        <!-- If we have a user ID, we're logged in so show "Log Out" -->
-        <!-- Otherwise, show "Log In" -->
+      <button class="login-button" @click="$gf.toggleLogIn">
         {{ $gf.me? 'Log Out' : 'Log In' }}
       </button>
-    </p>
 
+    </p>
+    <h5> 
+      ______________________________________________________________________________________________________________________________________________________________________________
+    </h5>
+    <h2> &#x2699; Settings &#x2699;</h2>
+    <!-- <h3> </h3> -->
+    <p>
+      &#x270F Change your Username  &#x270F: 
+      <!-- {{ usernameResult }} -->
+      <!-- <button class="edit-username" @click="" -->
+    <form class="set-username-form" @submit.prevent="resolver.requestUsername(preferredUsername)
+                                 .then(r=> usernameResult=r)
+                                 .catch(e=> usernameResult=e.toString())">
+      <input v-model="preferredUsername" placeholder="Choose a new Username" />
+      <input class="set-username-button" type="submit" value="Set Username" />
+    </form>
+    {{ usernameResult }}
+    <br>
+    <!-- </button> -->
+    </p>
+    <br>
+    <p> &#x270F Change your Name  &#x270F:</p>
+
+
+    <!-- <p>
+    <form @submit.prevent="resolver.requestUsername(preferredUsername)
+                             .then(r=> usernameResult=r)
+                             .catch(e=> usernameResult=e.toString())">
+      <input v-model="preferredUsername" placeholder="Choose a username..." />
+      <input type="submit" value="Set Username" />
+    </form>
+    {{ usernameResult }}
+    </p> -->
+
+
+    <!-- <main> -->
     <!-- If we're not logged in, hide everything except the login button -->
     <template v-if="$gf.me">
 
@@ -24,36 +71,95 @@
         <!-- We display names in multiple places, so we made a -->
         <!-- reusable <name></name> component. -->
         <!-- See below for the template. -->
-        My Name Is: <name :actor="$gf.me" :editable="true"></name>
+        <!-- CHANGED: commented My name is: out
+          My Name Is:  -->
+        <name :actor="$gf.me" :editable="true"></name>
       </p>
-
-      <p>
-        Change chat format:
+      <h5> 
+        ______________________________________________________________________________________________________________________________________________________________________________
+      </h5>
+  
+      <!-- <p>_______________________________________________________________________</p> -->
+      <p class="radio-group">
         <input type="radio" id="channel" :value="false" v-model="privateMessaging" />
-        <label for="channel">Channel-based public chat</label>
+        <label for="channel">Public Forum</label>
 
         <input type="radio" id="pm" :value="true" v-model="privateMessaging" />
-        <label for="pm">Private Messaging</label>
+        <label for="pm">Direct Messages</label>
+        <input type="radio" id="people" :value="noo" v-model="privateMessaging" />
+        <!-- <label for="people">People</label> -->
       </p>
+      <br><br>
 
-      <p v-if="!privateMessaging">
-        <label for="channel">
-          Change the channel you're chatting in:
-        </label>
-        <input id="channel" v-model="channel"/>
-      </p>
+
+
+
+      <p v-if="!privateMessaging"></p>
       <p v-else>
+
         <label for="recipient">
-          Paste the Actor ID of who you'd like to chat with:
+          User ID:
         </label>
-        <input id="recipient" v-model="recipient"/>
+        <input id="recipient" v-model="recipient" />
+
+        <br>
+        <label for="username">
+          Search by Username:
+        </label>
+        <input id="username" v-model="username" />
+        <button @click="searchByUsername">Search</button>
       </p>
+      <!-- </p> -->
+      <!-- <p v-else>
+
+        <label for="recipient">
+          Text Recipient Actor ID:
+        </label>
+        <input id="recipient" v-model="recipient" />
+      </p> -->
+      <!-- <p v-else> -->
+      <!-- <li> -->
+      <!-- Username: {{messages.actor}} -->
+      <!-- Username: <span class=username>{{lookupUsername(message.actor)}}</span> -->
+
+      <!-- Username: <span class=username>{{lookupUsername(actor)}}</span> -->
+      <!-- </li>
+        <li>
+          Actor ID: <span class=actor>{{ message.actor }}</span>
+        </li> -->
+
+
+      <!-- CHANGED: got rid of this -->
+      <!-- <label for="channel">
+        Channel:
+      </label>
+      <input id="channel" v-model="channel" /> -->
+      <!-- <label for="username">
+        Recipient:
+      </label>
+      <input id="username" v-model="username" /> -->
+
+
+      <!-- CHANGED FROM Enter the username of who you'd like to chat with: to Recipient  -->
+
+
 
       <!-- A form for sending messages -->
+      <!-- <br> -->
+      <!-- <button id="show-form-btn"></button>
+      <form id="message-form" class="hidden" @submit.prevent="sendMessage">
+        <input v-model="messageText" placeholder="Type a message..." />
+        <input type="submit" value="Send" />
+      </form> -->
       <form @submit.prevent="sendMessage">
-        <input v-model="messageText" placeholder="Type a message..."/>
-        <input type="submit" value="Send"/>
+        <input v-model="messageText" placeholder="Type a message... &#x1F4E9;" />
+        <input type="submit" value="Send &#x1F4E4;" />
       </form>
+
+      <!-- <br><br> -->
+      <!-- </p> -->
+
+
 
       <ul>
         <!-- List all the messages -->
@@ -62,61 +168,113 @@
           <!-- Display and edit form if we're editing a message -->
           <form v-if="editID==message.id" @submit.prevent="saveEditMessage(message)">
             <input v-model="editText">
-            <input type="submit" value="Save"/>
+            <input type="submit" value="Save" />
           </form>
 
           <!-- Otherwise, display a bunch of properties from the message -->
+          <!-- CHANGED: added a sort by: -->
           <ul v-else>
-            <li>
-              Message: {{ message.content }} 
+            <li class="message-username">
+              <!-- Username: {{messages.actor}} -->
+              <span class=username>{{lookupUsername(message.actor)}}</span>
+
+              <!-- Username: <span class=username>{{lookupUsername(actor)}}</span> -->
             </li>
-            <li>
-              From Name: <name :actor="message.actor"></name>
+
+
+            <li class="message-actor">
+              <!-- From Name:  -->
+              <name :actor="message.actor"></name>
             </li>
-            <li>
+
+            <li class="message-content">
+              <!-- CHANGED: commented out the messagaed for usability -->
+              <!-- Message:  -->
+              {{ message.content }}
+            </li>
+            <!-- CHANGED: 
+            UNCOMMENTED THE ACTOR ID -->
+            <!-- <li>
               From Actor ID: {{ message.actor }}
-            </li>
+            </li> -->
             <template v-if="privateMessaging">
               <li>
                 To Name: <name :actor="message.bto[0]"></name>
               </li>
+
               <li>
-                To Actor ID: {{ message.bto[0] }}
+                <name :actor="message.actor"></name>
               </li>
             </template>
-            <li>
-              Published at Time: {{ message.published }}
+            <!-- <li>
+              <name :actor="message.actor"></name>
+            </li> -->
+
+            <li class="message-actorid">
+              Actor ID:
+              <br>
+              <span class=actor style="user-select: all">{{ message.actor }}</span>
             </li>
-            <li>
-              Last Edited at Time: {{ message.updated }}
+            <li class="message-date">
+              {{ message.published }}
             </li>
-            <li>
-              <!-- This is a unique identifier that can be used to "link" to messages -->
-              ID: {{ message.id }}
-            </li>
+            <!-- check if should be -->
+            <!-- <li>
+              Last Edited: {{ message.updated }}
+            </li> -->
+
+            <!-- <li> -->
+            <!-- This is a unique identifier that can be used to "link" to messages -->
+            <!-- ID: {{ message.id }} -->
+            <!-- </li> -->
 
             <!-- Only add these controls if the message is ours -->
             <!-- You can't edit or delete other people's messages -->
             <template v-if="message.actor==$gf.me">
               <li>
                 <button @click="removeMessage(message)">
-                  Delete Message
+                  &#x1F5D1  Delete Message  &#x1F5D1
                 </button>
               </li>
               <li>
                 <button @click="startEditMessage(message)">
-                  Edit Message
+                  &#x270F  Edit Message   &#x270F
                 </button>
               </li>
+              <br><br>
             </template>
           </ul>
         </li>
-      </li>
+      </ul>
     </template>
   </div>
+  <template id="username">
+    <span v-if="!editing">
+      Change your Username:
+      <br>
+      <br>
+      <!-- If we're not editing the username -->
+      <!-- Display the user's current username, if it exists -->
+      <!-- or prompt to set a new username if it doesn't -->
+      {{ usernameResult ? usernameResult : "Set a new username" }}
+      <!-- Also if the username is "editable" add an edit button -->
+      <button v-if="editable" class="editable" @click="editUsername">
+        &#x270F  Edit Username   &#x270F
+      </button>
+    </span>
+
+    <!-- If we're in the editing state, create something to edit the username-->
+    <form v-else @submit.prevent="saveUsername">
+      <input v-model="editText" placeholder="Enter a new Username" />
+      <input type="submit" value="Save Username" />
+    </form>
+  </template>
+
 
   <template id="name">
     <span v-if="!editing">
+      <!-- Name: -->
+      <!-- Edit Name:<br> -->
 
       <!-- If we're not editing the name-->
       <!-- Display the profile's name, if it exists -->
@@ -124,16 +282,22 @@
       {{ profile? profile.name : 'Anonymous' }}
 
       <!-- Also if the name is "editable" add an edit button -->
-      <button v-if="editable" @click="editName">
-        Edit Name
+      <button v-if="editable" class="editable" @click="editName">
+        &#x270F Edit Name  &#x270F
       </button>
+
+
     </span>
 
     <!-- If we're in the editing state, create something to edit the name-->
     <form v-else @submit.prevent="saveName">
-      <input v-model="editText"/>
-      <input type="submit" value="Save Name"/>
+      <input v-model="editText" />
+      <input type="submit" value="Save Name" />
     </form>
   </template>
+
+
+
 </body>
+
 </html>
